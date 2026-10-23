@@ -187,6 +187,10 @@ O CSV do histórico inclui:
 - venda: `0`
 - comissão: fixa `0`
 
+## Pesquisa de passagens com pontos
+
+A ferramenta local completa está em [pesquisa-passagens](pesquisa-passagens/README.md). Abra `pesquisa-passagens/Iniciar Milhas.cmd` para usar o formulário, gerar o roteiro para o ChatGPT e consultar o relatório. A ferramenta usa os valores por milheiro informados no formulário para estimar o custo dos resgates em reais. Consulte a documentação da subpasta para atualizar as cotações, registrar novas pesquisas e gerar novamente o relatório. A execução local não exige publicar alterações na calculadora.
+
 ## Melhorias futuras
 
 - agrupamento de histórico por cliente ou rota

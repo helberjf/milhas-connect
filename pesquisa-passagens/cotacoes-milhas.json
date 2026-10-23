@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "currency": "BRL",
+  "unit": "preço por 1.000 milhas/pontos",
+  "source": "https://travel-points-calculate.vercel.app/",
+  "capturedAt": "2026-10-23T00:01:44Z",
+  "timeZone": "America/Sao_Paulo",
+  "sourceType": "Campos visíveis na sessão do Chrome do usuário",
+  "per1000": { "latam": 26, "smiles": 15, "azul": 15 },
+  "repositoryDefaults": { "latam": 26, "smiles": 16, "azul": 18 },
+  "note": "Valores editáveis da calculadora, não uma cotação oficial de compra ou venda de milhas. Os valores da sessão do navegador prevalecem sobre os padrões do repositório."
+}

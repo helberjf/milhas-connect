@@ -1,0 +1,315 @@
+{
+  "version": 2,
+  "provider": "ChatGPT, consulta interativa no Chrome",
+  "searchedOn": "2026-10-22",
+  "timeZone": "America/Sao_Paulo",
+  "timeNote": "Smiles e Azul VCP/GRU foram conferidos na primeira rodada de 22/10/2026, sem registro do minuto exato. LATAM e Azul CGH têm horário individual de reconferência nesta rodada.",
+  "complete": true,
+  "trip": {
+    "origin": "JDO",
+    "destinations": [
+      "VCP",
+      "GRU",
+      "CGH"
+    ],
+    "departure": "2026-11-12",
+    "type": "oneway",
+    "adults": 1,
+    "cabin": "Econômica",
+    "flexDays": 0,
+    "priority": "points"
+  },
+  "offers": [
+    {
+      "program": "LATAM Pass",
+      "operator": "LATAM Airlines Brasil",
+      "destination": "GRU",
+      "flights": [
+        "LA 3889"
+      ],
+      "departureTime": "03:00",
+      "arrivalTime": "06:10",
+      "durationMinutes": 190,
+      "connections": [],
+      "fare": "Light",
+      "points": 13161,
+      "cashRequired": 48.78,
+      "currency": "BRL",
+      "taxesVerified": true,
+      "baggage": "Bolsa/mochila 10 kg + mala de cabine 12 kg; sem bagagem despachada",
+      "eligibility": "Condição exibida na sessão autenticada",
+      "source": "https://www.latamairlines.com/br/pt/oferta-voos?origin=JDO&outbound=2026-11-12T00%3A00%3A00.000Z&destination=SAO&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true&sort=PRICE%2Casc&exp_id=9884ec84-da0e-4af1-acbb-078810d67e2a",
+      "caveat": "Reconfirmar preço e disponibilidade antes de emitir.",
+      "checkedAt": "2026-10-23T00:16:01Z"
+    },
+    {
+      "program": "Smiles",
+      "operator": "GOL",
+      "destination": "GRU",
+      "flights": [
+        "G3 1581"
+      ],
+      "departureTime": "04:35",
+      "arrivalTime": "07:45",
+      "durationMinutes": 190,
+      "connections": [],
+      "fare": "Tarifa Clube Smiles",
+      "points": 34600,
+      "cashRequired": 48.78,
+      "currency": "BRL",
+      "taxBreakdown": {
+        "boarding": 48.78
+      },
+      "taxesVerified": true,
+      "baggage": "Bolsa/mochila 10 kg + mala de cabine 12 kg; 0 bagagens despachadas no detalhe",
+      "eligibility": "Clube Smiles ou categorias Diamante/Magno. A sessão aberta exibia assinatura do Clube.",
+      "source": "https://www.smiles.com.br/mfe/emissao-passagem/?adults=1&cabin=ECONOMIC&children=0&departureDate=1794495600000&infants=0&isElegible=false&isFlexibleDateChecked=false&returnDate=&searchType=g3&segments=1&tripType=2&originAirport=JDO&originCity=&originCountry=&originAirportIsAny=false&destinationAirport=GRU&destinCity=&destinCountry=&destinAirportIsAny=false&novo-resultado-voos=true"
+    },
+    {
+      "program": "Azul Fidelidade",
+      "operator": "Azul",
+      "destination": "VCP",
+      "flights": [
+        "AD 2679"
+      ],
+      "departureTime": "02:20",
+      "arrivalTime": "05:20",
+      "durationMinutes": 180,
+      "connections": [],
+      "fare": "Azul, classe S",
+      "points": 43560,
+      "cashRequired": 88.68,
+      "currency": "BRL",
+      "taxBreakdown": {
+        "boarding": 48.78,
+        "redemption": 39.9
+      },
+      "taxesVerified": true,
+      "baggage": "Mala de mão até 10 kg; bagagem despachada não incluída",
+      "eligibility": "Desconto ao titular; o titular deve ser um dos viajantes",
+      "source": "https://www.voeazul.com.br/br/pt/home/selecao-voo?c[0].ds=JDO&c[0].std=11/12/2026&c[0].as=VCP&p[0].t=ADT&p[0].c=1&p[0].cp=false&f.dl=3&f.dr=3&cc=PTS"
+    },
+    {
+      "program": "Azul Fidelidade",
+      "operator": "Azul",
+      "destination": "GRU",
+      "flights": [
+        "AD 4998",
+        "AD 4153"
+      ],
+      "departureTime": "00:10",
+      "arrivalTime": "06:20",
+      "durationMinutes": 370,
+      "connections": [
+        {
+          "airport": "REC",
+          "arrivalTime": "01:40",
+          "departureTime": "03:05",
+          "minutes": 85
+        }
+      ],
+      "fare": "Azul, classe W",
+      "points": 41400,
+      "cashRequired": 88.68,
+      "currency": "BRL",
+      "taxBreakdown": {
+        "boarding": 48.78,
+        "redemption": 39.9
+      },
+      "taxesVerified": true,
+      "baggage": "Tarifa Azul sem bagagem despachada",
+      "eligibility": "Desconto ao titular; o titular deve ser um dos viajantes",
+      "source": "https://www.voeazul.com.br/br/pt/home/selecao-voo?c[0].ds=JDO&c[0].std=11/12/2026&c[0].as=GRU&p[0].t=ADT&p[0].c=1&p[0].cp=false&f.dl=3&f.dr=3&cc=PTS&1792713057504"
+    },
+    {
+      "program": "Azul Fidelidade",
+      "operator": "Azul",
+      "destination": "CGH",
+      "flights": [
+        "AD 4998",
+        "AD 4716"
+      ],
+      "departureTime": "00:10",
+      "arrivalTime": "06:40",
+      "durationMinutes": 390,
+      "connections": [
+        {
+          "airport": "REC",
+          "arrivalTime": "01:40",
+          "departureTime": "03:15",
+          "minutes": 95
+        }
+      ],
+      "fare": "Azul, classe W",
+      "points": 90000,
+      "cashRequired": 88.68,
+      "currency": "BRL",
+      "taxBreakdown": {
+        "boarding": 48.78,
+        "redemption": 39.9
+      },
+      "taxesVerified": true,
+      "baggage": "Mala de mão até 10 kg; sem bagagem despachada",
+      "eligibility": "Desconto ao titular; o titular deve ser um dos viajantes",
+      "source": "https://www.voeazul.com.br/br/pt/home/selecao-voo?c[0].ds=JDO&c[0].std=11/12/2026&c[0].as=CGH&p[0].t=ADT&p[0].c=1&p[0].cp=false&f.dl=3&f.dr=3&cc=PTS",
+      "checkedAt": "2026-10-23T00:10:50Z"
+    }
+  ],
+  "fareAlternative": {
+    "program": "LATAM Pass",
+    "sameFlightAsFirstOffer": true,
+    "fare": "Standard",
+    "points": 15127,
+    "cashRequired": 48.78,
+    "currency": "BRL",
+    "baggage": "Inclui 1 bagagem despachada de 23 kg, além da franquia de cabine",
+    "taxesVerified": true,
+    "checkedAt": "2026-10-23T00:16:01Z"
+  },
+  "coverage": [
+    {
+      "program": "LATAM Pass",
+      "destination": "GRU",
+      "state": "observed",
+      "note": "Tarifas Light e Standard, taxas, franquias e voo LA 3889 reconferidos após a liberação da sessão.",
+      "date": "2026-11-12",
+      "checkedAt": "2026-10-23T00:16:01Z",
+      "source": "https://www.latamairlines.com/br/pt/oferta-voos?origin=JDO&outbound=2026-11-12T00%3A00%3A00.000Z&destination=SAO&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true&sort=PRICE%2Casc&exp_id=9884ec84-da0e-4af1-acbb-078810d67e2a"
+    },
+    {
+      "program": "LATAM Pass",
+      "state": "no_results",
+      "note": "Após erro técnico, nova consulta pelo formulário oficial, com Viracopos VCP selecionado, só ida, 12/11/2026, 1 adulto, Economy e milhas, terminou com “Não encontramos voos para essas datas”.",
+      "destination": "VCP",
+      "date": "2026-11-12",
+      "checkedAt": "2026-10-23T00:19:38Z",
+      "source": "https://www.latamairlines.com/br/pt/oferta-voos?origin=JDO&outbound=2026-11-12T00%3A00%3A00.000Z&destination=VCP&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true&sort=RECOMMENDED&exp_id=9884ec84-da0e-4af1-acbb-078810d67e2a"
+    },
+    {
+      "program": "LATAM Pass",
+      "state": "no_results",
+      "note": "Consulta de resgate JDO → CGH, 12/11/2026, 1 adulto e Economy terminou com “Não encontramos voos para essas datas”. Isso não prova que a companhia não opera a rota.",
+      "destination": "CGH",
+      "date": "2026-11-12",
+      "source": "https://www.latamairlines.com/br/pt/oferta-voos?origin=JDO&outbound=2026-11-12T00%3A00%3A00.000Z&destination=CGH&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true&sort=PRICE%2Casc&exp_id=9884ec84-da0e-4af1-acbb-078810d67e2a",
+      "timeNote": "Consulta concluída nesta rodada de 22/10/2026, sem minuto exato registrado."
+    },
+    {
+      "program": "Azul Fidelidade",
+      "state": "observed",
+      "note": "Resgates selecionados até o total anterior aos dados dos viajantes; taxas conferidas.",
+      "destination": "VCP",
+      "date": "2026-11-12"
+    },
+    {
+      "program": "Azul Fidelidade",
+      "state": "observed",
+      "note": "Resgates selecionados até o total anterior aos dados dos viajantes; taxas conferidas.",
+      "destination": "GRU",
+      "date": "2026-11-12"
+    },
+    {
+      "program": "Azul Fidelidade",
+      "destination": "CGH",
+      "date": "2026-11-12",
+      "state": "observed",
+      "checkedAt": "2026-10-23T00:10:50Z",
+      "source": "https://www.voeazul.com.br/br/pt/home/selecao-voo?c[0].ds=JDO&c[0].std=11/12/2026&c[0].as=CGH&p[0].t=ADT&p[0].c=1&p[0].cp=false&f.dl=3&f.dr=3&cc=PTS",
+      "note": "Consulta válida retornou 13 itinerários. Conferido AD 4998 + AD 4716, via Recife: 90.000 pontos + R$ 88,68, com taxas discriminadas no resumo."
+    },
+    {
+      "program": "Smiles",
+      "destination": "GRU",
+      "state": "observed",
+      "note": "GOL G3 1581 conferido até o resumo, sem concordar com contrato nem confirmar passagens.",
+      "date": "2026-11-12"
+    },
+    {
+      "program": "Smiles",
+      "state": "no_results",
+      "note": "Consultas válidas de 12/11/2026 terminaram com 'Ops, não encontramos voos disponíveis nessa data'. Filtro GOL. Isso não prova que a companhia não opera essas rotas.",
+      "destination": "VCP",
+      "date": "2026-11-12"
+    },
+    {
+      "program": "Smiles",
+      "state": "no_results",
+      "note": "Consultas válidas de 12/11/2026 terminaram com 'Ops, não encontramos voos disponíveis nessa data'. Filtro GOL. Isso não prova que a companhia não opera essas rotas.",
+      "destination": "CGH",
+      "date": "2026-11-12"
+    }
+  ],
+  "limitations": [
+    "Tarifas em dinheiro não foram refeitas nesta rodada; prioridade em resgates.",
+    "Ofertas mistas não tiveram seus totais finais conferidos e não entram na seleção.",
+    "Nenhum saldo ou identificador de conta é publicado. Nenhuma passagem foi reservada ou emitida.",
+    "Pontos de programas diferentes não têm valor financeiro equivalente. Tarifas podem mudar até a emissão.",
+    "Cobertura concluída para resgates das nove combinações solicitadas. A ausência de disponibilidade registrada se refere à data e modalidade consultadas, sem inferência sobre a operação da rota."
+  ],
+  "programs": [
+    "LATAM Pass",
+    "Azul Fidelidade",
+    "Smiles"
+  ],
+  "updatedAt": "2026-10-23T00:19:38Z",
+  "valuation": {
+    "currency": "BRL",
+    "quoteSource": "https://travel-points-calculate.vercel.app/",
+    "quoteCapturedAt": "2026-10-23T00:01:44Z",
+    "formula": "(pontos / 1000 * milheiro) + dinheiro obrigatório",
+    "offers": [
+      {
+        "program": "LATAM Pass",
+        "destination": "GRU",
+        "flights": [
+          "LA 3889"
+        ],
+        "ratePer1000": 26,
+        "milesCost": 342.19,
+        "estimatedTotal": 390.97
+      },
+      {
+        "program": "Smiles",
+        "destination": "GRU",
+        "flights": [
+          "G3 1581"
+        ],
+        "ratePer1000": 15,
+        "milesCost": 519,
+        "estimatedTotal": 567.78
+      },
+      {
+        "program": "Azul Fidelidade",
+        "destination": "VCP",
+        "flights": [
+          "AD 2679"
+        ],
+        "ratePer1000": 15,
+        "milesCost": 653.4,
+        "estimatedTotal": 742.08
+      },
+      {
+        "program": "Azul Fidelidade",
+        "destination": "GRU",
+        "flights": [
+          "AD 4998",
+          "AD 4153"
+        ],
+        "ratePer1000": 15,
+        "milesCost": 621,
+        "estimatedTotal": 709.68
+      },
+      {
+        "program": "Azul Fidelidade",
+        "destination": "CGH",
+        "flights": [
+          "AD 4998",
+          "AD 4716"
+        ],
+        "ratePer1000": 15,
+        "milesCost": 1350,
+        "estimatedTotal": 1438.68
+      }
+    ]
+  }
+}

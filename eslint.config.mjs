@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Ferramenta local Node/HTML; verificada pelos testes próprios da subpasta.
+    "pesquisa-passagens/**",
   ]),
 ]);
 
