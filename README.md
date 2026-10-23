@@ -1,200 +1,37 @@
-# Calculadora de Milhas
+# Milhas Connect
 
-Aplicação web em Next.js para operação de venda de passagens emitidas com milhas.
+Plataforma privada de pesquisa de passagens com milhas, separada da calculadora original. O painel Next.js na Vercel mantém a fila e o histórico num banco Neon próprio. O auxiliar neste computador executa pesquisas nos sites oficiais e devolve os resultados por HTTPS.
 
-O projeto permite comparar múltiplas emissões, calcular custo das milhas, custo total, lucro bruto, comissão, lucro líquido, margens, venda mínima, aplicar filtros, salvar snapshots locais e exportar dados em CSV.
+## Uso
 
-## Principais funcionalidades
+1. Acesse a URL publicada e entre com a senha provisionada. Neste computador, ela está no arquivo local ignorado `.platform-data/Acesso Milhas Connect.md`.
+2. Abra **Iniciar Milhas Connect.cmd** e mantenha o computador ligado e conectado.
+3. Crie uma pesquisa no site. Acompanhe fila, execução, cobertura e pendências no painel.
+4. Compare ofertas, abra a calculadora ou prepare uma cotação. Valores de milheiro são compartilhados; cada pesquisa preserva os preços utilizados na criação.
 
-- edição do valor do milheiro por companhia aérea
-- múltiplas opções de emissão com comparação automática
-- ranking ordenado por maior lucro líquido
-- destaque visual para a melhor opção atual
-- filtros por companhia, nome e status financeiro
-- calculadora rápida separada do comparador
-- histórico local com snapshots restauráveis
-- exportação de opções atuais para CSV
-- exportação do histórico para CSV
-- persistência automática em `localStorage`
-- restauração de dados padrão
-- limpeza de todas as opções
-- fórmulas exibidas na interface
+Login, CAPTCHA e 2FA das companhias exigem intervenção humana. Com o auxiliar parado, `npm run robot:login` abre o perfil Chrome exclusivo. Depois repita a pesquisa. O robô não reserva, emite ou paga. Tarifas ausentes e taxas desconhecidas não são inventadas, nem entram como menor custo completo.
 
-## Tecnologias usadas
+Alertas de rotas são verificados enquanto o auxiliar está conectado; avisos aparecem dentro do painel. Não há envio de email/WhatsApp. Comparações selecionadas ficam neste navegador; pesquisas, monitores e milheiros ficam no banco.
 
-- Next.js `16.2.2`
-- React `19.2.4`
-- TypeScript
-- App Router
-- Tailwind CSS `4`
+## Desenvolvimento
 
-## Estrutura de pastas
+Requisitos: Node.js 22+, Chrome e Codex CLI autenticado na conta ChatGPT. Instale com `npm ci`, configure o ambiente e execute `npm run dev`.
 
-```text
-calculadora-milhas/
-├─ app/
-│  ├─ favicon.ico
-│  ├─ globals.css
-│  ├─ layout.tsx
-│  └─ page.tsx
-├─ components/
-│  ├─ action-bar.tsx
-│  ├─ empty-state.tsx
-│  ├─ filter-bar.tsx
-│  ├─ formula-section.tsx
-│  ├─ history-section.tsx
-│  ├─ milheiro-form.tsx
-│  ├─ option-form-card.tsx
-│  ├─ options-list.tsx
-│  ├─ page-header.tsx
-│  ├─ quick-calculator.tsx
-│  ├─ ranking-list.tsx
-│  └─ summary-cards.tsx
-├─ lib/
-│  ├─ calculations.ts
-│  ├─ constants.ts
-│  ├─ csv.ts
-│  ├─ defaults.ts
-│  ├─ filters.ts
-│  ├─ formatters.ts
-│  └─ storage.ts
-├─ types/
-│  └─ index.ts
-├─ .gitignore
-├─ eslint.config.mjs
-├─ next-env.d.ts
-├─ next.config.ts
-├─ package-lock.json
-├─ package.json
-├─ postcss.config.mjs
-├─ README.md
-└─ tsconfig.json
-```
+Variáveis privadas do servidor:
 
-## Como instalar
+- `DATABASE_URL`: banco PostgreSQL Neon independente.
+- `PLATFORM_PASSWORD`: senha forte do painel.
+- `PLATFORM_SESSION_SECRET`: segredo aleatório de pelo menos 32 caracteres.
+- `PLATFORM_WORKER_TOKEN`: token aleatório de pelo menos 32 caracteres, diferente da senha.
 
-```bash
-npm install
-```
+Não use prefixo `NEXT_PUBLIC_` para esses valores. Produção exige banco durável; não existe fallback para arquivos temporários da Vercel. Em desenvolvimento sem banco, os dados ficam em `.platform-data/state.json`.
 
-## Como rodar
+Comandos: `npm test`, `npm run lint`, `npm run build`, `npm run robot:setup`, `npm run robot:status`, `npm run robot:start`, `npm run robot:login`. O teste opcional `npm run robot:self-test` usa uma pequena chamada real ao Codex, sem abrir sites.
 
-```bash
-npm run dev
-```
+## Publicação e isolamento
 
-Abra `http://localhost:3000`.
+Este repositório tem projeto Vercel, banco e credenciais próprios. O projeto original `travel-points-calculate` permanece independente. A conta CLI deste projeto fica em `.vercel-cli`, ignorada pelo Git; use `--global-config .vercel-cli --scope helberjfs-projects` ao operar a Vercel localmente.
 
-## Persistência local
+A configuração do robô e seu perfil ficam em `.robot-data`, com proteção de acesso do usuário. Nunca envie essa pasta, `.platform-data`, `.env*` ou `.vercel-cli` ao Git. Segredos usados pelo auxiliar não são passados ao pesquisador do Codex. O uso depende das cotas dos serviços e da conta Codex.
 
-O projeto salva automaticamente no `localStorage`:
-
-- valores dos milheiros
-- opções de emissão
-- calculadora rápida
-- filtros
-- histórico de snapshots
-
-Ao abrir a aplicação, os dados salvos são recarregados. Se não houver dados prévios, a interface inicia com os valores padrão do projeto.
-
-## Exportação CSV
-
-A exportação é feita no front-end, sem bibliotecas externas, usando `Blob` e download automático.
-
-### Exportação de opções
-
-O CSV das opções inclui:
-
-- nome
-- companhia
-- milhas
-- valor do milheiro
-- custo das milhas
-- taxa
-- custo total
-- venda
-- tipo de comissão
-- comissão informada
-- comissão em reais
-- lucro bruto
-- lucro líquido
-- margem bruta
-- margem líquida
-- venda mínima
-
-### Exportação de histórico
-
-O CSV do histórico inclui:
-
-- id do snapshot
-- nome do snapshot
-- data/hora
-- quantidade de opções
-- melhor opção
-- lucro líquido total
-- margem líquida média
-
-## Fórmulas usadas
-
-- `custo das milhas = (milhas / 1000) * valor do milheiro`
-- `custo total = custo das milhas + taxa`
-- `lucro bruto = venda - custo total`
-- `comissão em reais`
-  - `fixed`: valor informado
-  - `percent`: `(venda * percentual) / 100`
-- `lucro líquido = lucro bruto - comissão em reais`
-- `margem bruta = (lucro bruto / venda) * 100`, quando `venda > 0`
-- `margem líquida = (lucro líquido / venda) * 100`, quando `venda > 0`
-- `venda mínima = custo total`
-
-## Dados iniciais
-
-### Milheiros
-
-- `smiles = 16`
-- `latam = 26`
-- `azul = 18`
-- `outro = 0`
-
-### Opções iniciais
-
-1. `Opção 1`
-   - companhia: `smiles`
-   - milhas: `46000`
-   - taxa: `0`
-   - venda: `800`
-   - comissão: fixa `0`
-
-2. `Opção 2`
-   - companhia: `smiles`
-   - milhas: `8280`
-   - taxa: `690`
-   - venda: `800`
-   - comissão: fixa `0`
-
-3. `Opção 3`
-   - companhia: `latam`
-   - milhas: `24183`
-   - taxa: `50`
-   - venda: `800`
-   - comissão: fixa `0`
-
-### Calculadora rápida
-
-- companhia: `latam`
-- milhas: `0`
-- taxa: `0`
-- venda: `0`
-- comissão: fixa `0`
-
-## Pesquisa de passagens com pontos
-
-A ferramenta local completa está em [pesquisa-passagens](pesquisa-passagens/README.md). Abra `pesquisa-passagens/Iniciar Milhas.cmd` para usar o formulário, gerar o roteiro para o ChatGPT e consultar o relatório. A ferramenta usa os valores por milheiro informados no formulário para estimar o custo dos resgates em reais. Consulte a documentação da subpasta para atualizar as cotações, registrar novas pesquisas e gerar novamente o relatório. A execução local não exige publicar alterações na calculadora.
-
-## Melhorias futuras
-
-- agrupamento de histórico por cliente ou rota
-- exportação PDF
-- cenários com ida e volta separadas
-- importação CSV
-- autenticação e sincronização em nuvem
+Detalhes: [robô local](docs/robo-local.md), [protocolo HTTP](docs/protocolo-robo.md), [armazenamento e autenticação](docs/storage-auth.md), [painel](docs/painel.md).

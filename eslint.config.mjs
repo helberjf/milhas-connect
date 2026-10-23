@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    ".platform-data/**",
+    ".robot-data/**",
+    ".vercel-cli/**",
+    ".vercel/**",
     // Ferramenta local Node/HTML; verificada pelos testes próprios da subpasta.
     "pesquisa-passagens/**",
   ]),

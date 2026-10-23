@@ -21,6 +21,22 @@ const paths = {
   filter: "M4 6h16M7 12h10m-7 6h4",
   shield: "m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Zm-4 10 3 3 5-6",
   spark: "m12 3 2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5L12 3Z",
+  grid: "M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z",
+  search: "M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z",
+  robot: "M12 2v3M5 8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8Zm0 3H2v5h3m14-5h3v5h-3M9 11h.01M15 11h.01M9 16h6",
+  bell: "M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4",
+  clock: "M12 7v5l3 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z",
+  settings: "M4 7h16M4 17h16M8 4v6m8 4v6",
+  logout: "M9 4H4v16h5m5-15 7 7-7 7M8 12h13",
+  external: "M14 3h7v7m0-7L10 14M10 3H3v18h18v-7",
+  refresh: "M20 7a9 9 0 0 0-15-2L2 8m0-5v5h5m-3 9a9 9 0 0 0 15 2l3-3m0 5v-5h-5",
+  copy: "M9 9h12v12H9V9ZM15 5V3H3v12h2",
+  alert: "m12 3 10 18H2L12 3Zm0 6v5m0 3h.01",
+  lock: "M6 10h12v11H6V10Zm3 0V6a3 3 0 0 1 6 0v4",
+  swap: "M3 7h18m-5-4 5 4-5 4M21 17H3m5-4-5 4 5 4",
+  user: "M20 21v-2a7 7 0 0 0-14 0v2M17 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
+  wifi: "M3 8a15 15 0 0 1 18 0M6 12a10 10 0 0 1 12 0m-9 4a5 5 0 0 1 6 0m-3 4h.01",
+  suitcase: "M8 6V3h8v3M4 6h16v14H4V6Zm4 0v14m8-14v14",
 } as const;
 
 export type IconName = keyof typeof paths;

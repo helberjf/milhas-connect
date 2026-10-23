@@ -15,9 +15,9 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Milhas · Calculadora de viagens",
+  title: "Milhas Connect · Seu próximo destino",
   description:
-    "Calcule o custo dos seus pontos, compare emissões e planeje suas viagens com mais clareza.",
+    "Pesquise passagens com milhas, acompanhe seu robô, compare ofertas reais e prepare cotações em um só lugar.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {

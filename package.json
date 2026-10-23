@@ -1,5 +1,5 @@
 {
-  "name": "calculadora-milhas",
+  "name": "milhas-connect",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,10 +7,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --experimental-default-type=module --experimental-strip-types --test tests/*.test.mjs"
+    "test": "node --experimental-default-type=module --experimental-strip-types --test tests/*.test.mjs",
+    "robot:start": "node scripts/robot-start.mjs",
+    "robot:setup": "node scripts/robot-setup.mjs",
+    "robot:status": "node scripts/robot-status.mjs --check",
+    "robot:login": "node scripts/robot-login.mjs",
+    "robot:self-test": "node scripts/robot-self-test.mjs"
   },
   "dependencies": {
-    "next": "16.2.2",
+    "@neondatabase/serverless": "^1.2.0",
+    "@playwright/mcp": "^0.0.83",
+    "next": "^16.4.3",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
@@ -20,7 +27,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.2",
+    "eslint-config-next": "^16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

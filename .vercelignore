@@ -1,0 +1,7 @@
+.git
+.next
+node_modules
+.env*
+.vercel-cli
+.platform-data
+.robot-data

@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+/.robot-data/
+/.platform-data/
+/.vercel-cli/
 /.pnp
 .pnp.*
 .yarn/*
@@ -39,3 +42,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.env*.local
