@@ -12,5 +12,5 @@
 - [x] Implementar painel responsivo com pesquisa, estados reais, conexão do robô, ofertas, calculadora compartilhada e propostas.
 - [x] Implementar e testar auxiliar local com configuração, polling, heartbeats, execução real via CLI e envio idempotente de resultados.
 - [x] Configurar banco independente e projeto Vercel na conta confirmada, sem alterar a aplicação anterior.
-- [ ] Verificar testes, lint, tipos, build, fluxos no navegador e a comunicação do auxiliar com o site publicado.
-- [ ] Entregar URL, iniciador local, instruções de acesso e limites observados na verificação.
+- [x] Verificar testes, lint, tipos, build, fluxos no navegador e a comunicação do auxiliar com o site publicado.
+- [x] Entregar URL, iniciador local, instruções de acesso e limites observados na verificação.

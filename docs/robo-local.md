@@ -59,3 +59,5 @@ Referências primárias: [Codex não interativo](https://learn.chatgpt.com/docs/
 O teste opcional `npm run robot:self-test -- --browser` (com o auxiliar parado) abre uma página do perfil exclusivo e exige uma chamada real de ferramenta do navegador. O teste sem essa opção verifica somente Codex e JSON. O host de Code Mode precisa ficar habilitado para expor as ferramentas MCP; shell e integrações alheias continuam desativados. Resultados de pesquisa sem nenhuma chamada bem-sucedida ao navegador são recusados como pendência de infraestrutura.
 
 As ferramentas permitidas do servidor Playwright exclusivo são pré-aprovadas para esta pesquisa automática (`default_tools_approval_mode="approve"`). O filtro de ferramentas, domínios e ações permanece no intermediário MCP. Essa opção não é aplicada ao shell, a outros servidores ou ao navegador cotidiano.
+
+Atalho para login humano: com o auxiliar parado, abra **Login das companhias.cmd**. Ele abre os sites no perfil exclusivo. Feche o navegador após entrar e abra **Iniciar Milhas Connect.cmd**. Repita a pesquisa pelo painel.
