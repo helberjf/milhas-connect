@@ -6,8 +6,8 @@ import { DATA_DIR, checkPrerequisites, protectDataDirectory, writePrivateJson } 
 import { buildInvocation, runOwnedProcess } from '../robot/executor.mjs';
 import { RESULT_SCHEMA } from '../robot/contract.mjs';
 
-// Deliberately does not load worker configuration, enqueue a job or open any browser.
-// This optional smoke consumes one tiny Codex turn using the signed-in ChatGPT account.
+// Never loads worker configuration or enqueues a job. --browser explicitly checks
+// a blank page in the dedicated profile; the default does not open a browser.
 let workspace;
 try {
   await protectDataDirectory();
@@ -20,9 +20,12 @@ try {
   const invocation = buildInvocation({ ...prerequisites, workspace, schemaPath, outputPath,
     profilePath: path.join(DATA_DIR, 'chrome-profile'), artifactsPath: path.join(directory, 'browser') });
   const expected = { summary: 'Teste de infraestrutura sem pesquisa de tarifas.', offers: [], coverage: [], attention: [] };
-  await runOwnedProcess(invocation, `Teste controlado de infraestrutura. Não use ferramentas. Não navegue, não abra navegador e não pesquise voos. Retorne exatamente este JSON no esquema fornecido: ${JSON.stringify(expected)}`, { timeoutMs: 60000 });
+  const browser = process.argv.includes('--browser');
+  const instruction = browser ? 'Use browser_snapshot uma vez na página atual do perfil exclusivo. Não navegue, não pesquise voos nem preencha dados. Depois retorne o JSON solicitado.' : 'Não use ferramentas. Não navegue, não abra navegador e não pesquise voos.';
+  const execution = await runOwnedProcess(invocation, `Teste controlado de infraestrutura. ${instruction} Retorne exatamente este JSON no esquema fornecido: ${JSON.stringify(expected)}`, { timeoutMs: 60000 });
   assert.deepEqual(JSON.parse(await readFile(outputPath, 'utf8')), expected);
-  console.log('Smoke confirmado: Codex autenticado, configuração isolada, MCP inicializado e JSON estrito recebido. Nenhum navegador ou consulta de tarifa foi solicitado.');
+  if (browser) assert.ok(execution.browserCalls > 0, 'Nenhuma ferramenta do navegador foi executada.');
+  console.log(browser ? 'Smoke confirmado: Codex executou uma ferramenta real do navegador dedicado e devolveu JSON estrito. Nenhuma tarifa foi consultada.' : 'Smoke confirmado: Codex autenticado e JSON estrito recebido. O acesso às ferramentas do navegador requer o teste --browser.');
 } catch (error) {
   console.error(error.attention ? error.message : 'Smoke falhou: não foi recebido o JSON controlado esperado. Confira configuração/versão do Codex e conexão.');
   process.exitCode = 1;

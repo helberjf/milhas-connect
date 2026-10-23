@@ -1,6 +1,6 @@
 # Protocolo Milhas Connect v1
 
-Base: /api/platform. JSON UTF-8. Falhas: {error:string}; status HTTP 400, 401, 403, 404, 409, 413, 422 ou 503. API nunca retorna credenciais, hashes ou lease de outro robô. Origin de mutações do painel deve coincidir com o site. Configuração secreta é local/ambiente, nunca Git ou URL.
+Base: /api/platform. JSON UTF-8, limite de 2.000.000 bytes por solicitação (4.096 bytes no login). Falhas: {error:string}; status HTTP 400, 401, 403, 404, 409, 413, 422, 429 ou 503. API nunca retorna credenciais, hashes ou lease de outro robô. Origin de mutações do painel deve coincidir com o site. Configuração secreta é local/ambiente, nunca Git ou URL.
 
 ## Painel
 

@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, readdir, rm, stat } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { randomUUID } from 'node:crypto';
+import { StringDecoder } from 'node:string_decoder';
 import { BROWSER_TOOLS } from './browser-server.mjs';
 import { MAX_RESULT_BYTES, PROGRAMS, RESULT_SCHEMA, searchScope, validateResult } from './contract.mjs';
 import { DATA_DIR, ROOT, AttentionError, checkPrerequisites, writePrivateJson } from './config.mjs';
@@ -15,13 +16,14 @@ export function buildInvocation(paths, environment = process.env) {
   const config = {
     'features.shell_tool': false, 'features.apps': false, 'features.plugins': false,
     'features.multi_agent': false, 'features.browser_use': false, 'features.computer_use': false,
-    'features.in_app_browser': false, 'features.code_mode_host': false, 'features.workspace_dependencies': false,
+    'features.in_app_browser': false, 'features.code_mode_host': true, 'features.workspace_dependencies': false,
     'features.view_image': false, 'features.image_generation': false, 'features.memories': false,
     'features.hooks': false, 'features.skip_host_skill_discovery': true, 'web_search': 'disabled',
     'mcp_servers.playwright.command': paths.nodePath,
     'mcp_servers.playwright.args': [bridgePath, paths.mcpPath, paths.profilePath, paths.artifactsPath],
     'mcp_servers.playwright.cwd': paths.workspace,
     'mcp_servers.playwright.enabled_tools': BROWSER_TOOLS,
+    'mcp_servers.playwright.default_tools_approval_mode': 'approve',
     'mcp_servers.playwright.required': true,
     'mcp_servers.playwright.startup_timeout_sec': 40,
     'mcp_servers.playwright.tool_timeout_sec': 90,
@@ -78,11 +80,25 @@ export async function runOwnedProcess(invocation, prompt, { signal, timeoutMs = 
   return new Promise((resolve, reject) => {
     const child = spawn(invocation.command, invocation.args, { ...invocation.options, env: invocation.env, detached: process.platform !== 'win32' });
     let bytes = 0; let stderr = ''; let failure = null; let stopping = false;
+    let browserCalls = 0; let pendingLine = '';
+    const decoder = new StringDecoder('utf8');
     const stop = async reason => { if (stopping) return; stopping = true; failure = reason; await stopOwnedProcessTree(child); };
     const abort = () => { void stop(signal.reason || new Error('Pesquisa interrompida.')); };
     signal?.addEventListener('abort', abort, { once: true });
     const timer = setTimeout(() => { void stop(new AttentionError('Tempo limite da pesquisa atingido. Verifique login/CAPTCHA no navegador do robô e tente novamente.')); }, timeoutMs);
-    child.stdout.on('data', data => { bytes += data.length; if (bytes > maxOutputBytes) void stop(new Error('Execução interrompida: saída do pesquisador excedeu o limite local.')); });
+    child.stdout.on('data', data => {
+      bytes += data.length;
+      if (bytes > maxOutputBytes) { void stop(new Error('Execução interrompida: saída do pesquisador excedeu o limite local.')); return; }
+      pendingLine += decoder.write(data);
+      let newline;
+      while ((newline = pendingLine.indexOf('\n')) >= 0) {
+        const line = pendingLine.slice(0, newline); pendingLine = pendingLine.slice(newline + 1);
+        try {
+          const event = JSON.parse(line); const item = event.item;
+          if (event.type === 'item.completed' && item?.type === 'mcp_tool_call' && item.server === 'playwright' && BROWSER_TOOLS.includes(item.tool) && item.status === 'completed' && !item.error && item.result && !item.result.isError) browserCalls += 1;
+        } catch { /* Non-JSON diagnostics are ignored; observations are never retained. */ }
+      }
+    });
     child.stderr.on('data', data => { bytes += data.length; stderr = (stderr + data.toString()).slice(-32000); if (bytes > maxOutputBytes) void stop(new Error('Execução interrompida: saída do pesquisador excedeu o limite local.')); });
     child.stdin.on('error', () => {});
     child.once('error', () => { failure = new AttentionError('Não foi possível iniciar o Codex CLI. Execute o diagnóstico do robô.'); });
@@ -92,7 +108,7 @@ export async function runOwnedProcess(invocation, prompt, { signal, timeoutMs = 
       else if (code !== 0) {
         const accessProblem = /login|auth|unauthor|mcp|browser|chrome|quota|rate.limit|usage.limit|insufficient|configuration|config.*error/i.test(stderr);
         reject(accessProblem ? new AttentionError('O pesquisador não conseguiu iniciar ou acessar o navegador/conta. Execute o diagnóstico; confira login, Chrome, conexão e limite de uso do Codex.') : new Error('O pesquisador encerrou sem um resultado válido. Execute o diagnóstico local.'));
-      } else resolve({ bytes });
+      } else resolve({ bytes, browserCalls });
     });
     child.stdin.end(prompt);
   });
@@ -119,7 +135,8 @@ export function createExecutor(config, { directory = DATA_DIR, prerequisites = c
       const artifactsPath = path.join(runPath, 'browser'); await mkdir(artifactsPath, { mode: 0o700 });
       const invocation = buildInvocation({ ...paths, workspace, schemaPath, outputPath,
         profilePath: path.join(directory, 'chrome-profile'), artifactsPath });
-      await processRunner(invocation, buildResearchPrompt(job), { signal, timeoutMs: config.jobTimeoutMinutes * 60000 });
+      const execution = await processRunner(invocation, buildResearchPrompt(job), { signal, timeoutMs: config.jobTimeoutMinutes * 60000 });
+      if (!execution?.browserCalls) throw new AttentionError('O pesquisador não conseguiu usar as ferramentas do navegador. Execute o diagnóstico local e tente novamente.');
       const info = await stat(outputPath).catch(() => null);
       if (!info || info.size > 2_000_000) throw new Error('O pesquisador não produziu um arquivo JSON dentro do limite esperado.');
       let result; try { result = JSON.parse(await readFile(outputPath, 'utf8')); } catch { throw new Error('O pesquisador devolveu JSON inválido; nenhuma oferta foi publicada.'); }

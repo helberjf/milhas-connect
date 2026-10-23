@@ -269,3 +269,16 @@ test('browser bridge stamps successful observations with a real local UTC timest
   assert.match(stamped.content.at(-1).text, /Milhas Connect observedAt: \d{4}-\d{2}-\d{2}T/);
   assert.ok(Number.isFinite(Date.parse(stamped.content.at(-1).text.split(': ').at(-1))));
 });
+
+test('Codex retains the code-mode host required to expose permitted MCP browser tools', () => {
+  const invocation = executor.buildInvocation({ codexPath: 'codex', nodePath: 'node', mcpPath: '/fake/mcp.js', workspace: '/empty', schemaPath: '/schema.json', outputPath: '/output.json', profilePath: '/profile', artifactsPath: '/artifacts' }, {});
+  assert.ok(invocation.args.includes('features.code_mode_host=true'));
+  assert.ok(invocation.args.includes('features.shell_tool=false'));
+});
+
+test('only the guarded Playwright server is preapproved for the requested unattended research', () => {
+  const invocation = executor.buildInvocation({codexPath:'codex',nodePath:'node',mcpPath:'/fake/mcp.js',workspace:'/empty',schemaPath:'/schema',outputPath:'/out',profilePath:'/profile',artifactsPath:'/artifacts'}, {});
+  assert.ok(invocation.args.includes('mcp_servers.playwright.default_tools_approval_mode="approve"'));
+  assert.ok(invocation.args.includes('read-only'));
+  assert.equal(invocation.args.some(value => value.includes('dangerously-bypass')), false);
+});

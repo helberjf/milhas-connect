@@ -47,7 +47,7 @@ test('executor runs a real controlled child, reads strict result and removes its
       workspace = invocation.options.cwd;
       assert.deepEqual(await readdir(workspace), []);
       const outputPath = invocation.args[invocation.args.indexOf('--output-last-message') + 1];
-      return runOwnedProcess({ ...invocation, command: process.execPath, args: [fixture, outputPath] }, prompt, options);
+      return { ...await runOwnedProcess({ ...invocation, command: process.execPath, args: [fixture, outputPath] }, prompt, options), browserCalls: 1 };
     },
   });
   const result = await execute({ id: 'fixture-job', input });
@@ -89,4 +89,25 @@ test('real stdio bridge filters MCP tools and stamps fixture observations withou
   assert.match(observed.content.at(-1).text, /Milhas Connect observedAt:/);
   const blocked = await request('tools/call', { name: 'browser_navigate', arguments: { url: 'file:///secret' } });
   assert.equal(blocked.isError, true);
+});
+
+test('executor rejects an apparently valid research result when no browser tool succeeded', async t => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'milhas-robot-no-browser-test-'));
+  t.after(() => rm(directory, { recursive: true, force: true }));
+  const execute = createExecutor({ jobTimeoutMinutes: 1 }, { directory,
+    prerequisites: async () => ({ codexPath: process.execPath, nodePath: process.execPath, mcpPath: '/fixture' }),
+    processRunner: async invocation => {
+      const output = invocation.args[invocation.args.indexOf('--output-last-message') + 1];
+      await writeFile(output, JSON.stringify({summary:'Ferramentas indisponíveis',offers:[],coverage:[],attention:[]}));
+      return { bytes: 100, browserCalls: 0 };
+    },
+  });
+  await assert.rejects(execute({id:'no-browser',input}), error => error.attention && /navegador/.test(error.message));
+});
+
+test('process telemetry counts successful permitted MCP browser calls without storing observations', async () => {
+  const event = { type:'item.completed', item:{type:'mcp_tool_call',server:'playwright',tool:'browser_snapshot',status:'completed',error:null,result:{content:[{type:'text',text:'private observation'}]}} };
+  const result = await runOwnedProcess(simpleInvocation(['-e', `console.log(${JSON.stringify(JSON.stringify(event))})`]), '', {timeoutMs:10000});
+  assert.equal(result.browserCalls, 1);
+  assert.equal(JSON.stringify(result).includes('private observation'), false);
 });
