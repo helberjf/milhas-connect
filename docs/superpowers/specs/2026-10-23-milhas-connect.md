@@ -21,4 +21,3 @@ O auxiliar usa o Codex CLI já autenticado e Playwright MCP com perfil exclusivo
 ## Entrega e verificação
 
 Criar projeto Vercel novo apenas na conta confirmada, sem contratar planos pagos. Credenciais ficam fora do Git e dos logs. Validar fila concorrente, expiração de lease, autorização, resultados incompletos, cálculo, reconexão, cancelamento e links. Conferir navegador em computador e celular. Executar testes, lint, tipos e build; fazer uma pesquisa de verificação e documentar qualquer intervenção real necessária.
-
