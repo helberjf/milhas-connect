@@ -1,434 +1,51 @@
-import { COMMISSION_TYPE_OPTIONS, COMPANY_OPTIONS } from "@/lib/constants";
-import { formatBRL, formatPercent } from "@/lib/formatters";
-import type {
-  CalculatedFlightOption,
-  CommissionType,
-  CompanyKey,
-  FlightOption,
-  MilePrices,
-} from "@/types";
-import { useState } from "react";
+import { Icon } from "@/components/icon";
+import { COMPANY_OPTIONS } from "@/lib/constants";
+import { formatBRL, formatMiles, formatPercent } from "@/lib/formatters";
+import type { CalculatedFlightOption, CommissionType, CompanyKey, FlightOption } from "@/types";
 
-type DirectCompareProps = {
-  options: CalculatedFlightOption[];
-  milePrices: MilePrices;
-  onMilePriceChange: (company: CompanyKey, value: string) => void;
-  onAddOption: () => void;
-  onCreateOption: (option: Omit<FlightOption, "id">) => void;
-  onTextChange: (id: string, field: "name", value: string) => void;
-  onCompanyChange: (id: string, company: CompanyKey) => void;
-  onNumberChange: (
-    id: string,
-    field: "miles" | "cashAmount" | "saleAmount" | "commissionValue",
-    value: string,
-  ) => void;
-  onCommissionTypeChange: (id: string, value: CommissionType) => void;
+type Props = {
+  options: CalculatedFlightOption[]; isFiltered: boolean;
+  onNew: () => void; onClearFilters: () => void;
+  onUpdate: (id: string, patch: Partial<FlightOption>) => void;
   onRemove: (id: string) => void;
 };
 
-export function DirectCompare({
-  options,
-  milePrices,
-  onMilePriceChange,
-  onAddOption,
-  onCreateOption,
-  onTextChange,
-  onCompanyChange,
-  onNumberChange,
-  onCommissionTypeChange,
-  onRemove,
-}: DirectCompareProps) {
-  const [newOption, setNewOption] = useState<Omit<FlightOption, "id">>({
-    name: "",
-    company: "smiles",
-    miles: 0,
-    cashAmount: 0,
-    saleAmount: 0,
-    commissionType: "fixed",
-    commissionValue: 0,
-  });
-  const bestOption = options[0] ?? null;
+const numberFields = [
+  { key: "miles", label: "Pontos", step: "1" },
+  { key: "cashAmount", label: "Taxas (R$)", step: "0.01" },
+  { key: "saleAmount", label: "Venda (R$)", step: "0.01" },
+  { key: "commissionValue", label: "Comissão", step: "0.01" },
+] as const;
 
-  function toNumber(value: string): number {
-    const parsed = Number(value.replace(",", "."));
-    return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
-  }
-
-  function handleCreateOption() {
-    onCreateOption({
-      ...newOption,
-      name: newOption.name.trim(),
-    });
-    setNewOption((current) => ({
-      ...current,
-      name: "",
-      miles: 0,
-      cashAmount: 0,
-      saleAmount: 0,
-      commissionValue: 0,
-    }));
-  }
-
-  return (
-    <section className="rounded-[28px] border border-slate-200/80 bg-white/95 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 sm:p-5">
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-300">
-              Comparacao direta
-            </p>
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-              Adicione os planos e veja o melhor lucro
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onAddOption}
-            className="inline-flex h-10 items-center justify-center rounded-xl bg-slate-950 px-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-500"
-          >
-            Novo plano
-          </button>
+export function DirectCompare({ options, isFiltered, onNew, onClearFilters, onUpdate, onRemove }: Props) {
+  function numeric(value: string) { const number = Number(value.replace(",", ".")); return Number.isFinite(number) ? Math.max(0, number) : 0; }
+  if (!options.length) return <section className="panel empty-workspace">
+    <span className="empty-illustration"><Icon name={isFiltered ? "filter" : "compare"} size={31} /></span>
+    <h2>{isFiltered ? "Nenhuma emissão com esses filtros." : "Qual será o seu próximo destino?"}</h2>
+    <p>{isFiltered ? "Tente outro programa ou limpe os filtros para ver suas emissões." : "Calcule uma emissão e adicione à comparação. Assim fica mais fácil escolher a melhor opção."}</p>
+    <button className="button button-primary" onClick={isFiltered ? onClearFilters : onNew}><Icon name={isFiltered ? "filter" : "plus"} size={17} />{isFiltered ? "Limpar filtros" : "Calcular primeira emissão"}</button>
+  </section>;
+  return <div className="comparison-grid">
+    {options.map((option, index) => <article className={`panel comparison-card ${index === 0 ? "best-option" : ""}`} key={option.id}>
+      {index === 0 && <div className="best-ribbon"><Icon name="spark" size={14} />Melhor resultado por lucro líquido</div>}
+      <div className="comparison-card-header">
+        <span className={`company-label ${option.company}`}><i className={`company-dot ${option.company}`} />{option.companyLabel}</span>
+        <button className="icon-button danger-icon" onClick={() => onRemove(option.id)} aria-label={`Remover ${option.name}`} title="Remover emissão"><Icon name="trash" size={17} /></button>
+      </div>
+      <h2>{option.name || "Emissão sem nome"}</h2>
+      <p className="option-miles">{formatMiles(option.miles)} pontos <span>+ {formatBRL(option.cashAmount)} em taxas</span></p>
+      <div className="comparison-cost"><span>Custo total</span><strong>{formatBRL(option.totalCost)}</strong></div>
+      <div className="comparison-metrics"><div><span>Valor de venda</span><strong>{formatBRL(option.saleAmount)}</strong></div><div><span>Lucro líquido</span><strong className={option.netProfit < 0 ? "negative" : "positive"}>{formatBRL(option.netProfit)}</strong></div><div><span>Margem líquida</span><strong>{formatPercent(option.netMargin)}</strong></div></div>
+      <details className="edit-emission">
+        <summary><Icon name="edit" size={15} />Editar emissão<Icon name="chevron" size={15} /></summary>
+        <div className="edit-fields">
+          <label className="form-field"><span>Nome da emissão</span><input value={option.name} onChange={(e) => onUpdate(option.id, { name: e.target.value })} /></label>
+          <label className="form-field"><span>Programa</span><select value={option.company} onChange={(e) => onUpdate(option.id, { company: e.target.value as CompanyKey })}>{COMPANY_OPTIONS.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
+          {numberFields.map((field) => <label className="form-field" key={field.key}><span>{field.label}{field.key === "commissionValue" ? option.commissionType === "percent" ? " (%)" : " (R$)" : ""}</span><input type="number" min="0" step={field.step} inputMode={field.step === "1" ? "numeric" : "decimal"} value={option[field.key] || ""} onChange={(e) => onUpdate(option.id, { [field.key]: numeric(e.target.value) })} /></label>)}
+          <label className="form-field"><span>Tipo de comissão</span><select value={option.commissionType} onChange={(e) => onUpdate(option.id, { commissionType: e.target.value as CommissionType })}><option value="fixed">Fixa em reais</option><option value="percent">Percentual</option></select></label>
+          <dl className="option-details"><div><dt>Custo dos pontos</dt><dd>{formatBRL(option.milesCost)}</dd></div><div><dt>Lucro bruto</dt><dd>{formatBRL(option.grossProfit)}</dd></div><div><dt>Comissão em reais</dt><dd>{formatBRL(option.commissionAmount)}</dd></div><div><dt>Margem bruta</dt><dd>{formatPercent(option.grossMargin)}</dd></div></dl>
         </div>
-
-        {bestOption ? (
-          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 dark:border-emerald-700/50 dark:bg-emerald-950/40">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-700 dark:text-emerald-300">
-              Melhor opcao agora
-            </p>
-            <div className="mt-1 flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                {bestOption.name} ({bestOption.companyLabel})
-              </p>
-              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
-                Lucro liquido: {formatBRL(bestOption.netProfit)}
-              </p>
-            </div>
-          </div>
-        ) : null}
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-800/70">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
-          Valor do milheiro por companhia (carregado automaticamente e editavel)
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {COMPANY_OPTIONS.map((company) => (
-            <label key={company.key} className="flex flex-col gap-1">
-              <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                {company.label}
-              </span>
-              <div className="relative">
-                <span className="pointer-events-none absolute inset-y-0 left-3 inline-flex items-center text-xs text-slate-500 dark:text-slate-400">
-                  R$
-                </span>
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={milePrices[company.key]}
-                  onChange={(event) => onMilePriceChange(company.key, event.target.value)}
-                  className="h-10 w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                />
-              </div>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-800/70">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
-          Formulario rapido para iniciar comparacao
-        </p>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <input
-            type="text"
-            value={newOption.name}
-            onChange={(event) =>
-              setNewOption((current) => ({ ...current, name: event.target.value }))
-            }
-            placeholder="Nome do plano"
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <select
-            value={newOption.company}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                company: event.target.value as CompanyKey,
-              }))
-            }
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          >
-            {COMPANY_OPTIONS.map((company) => (
-              <option key={company.key} value={company.key}>
-                {company.label}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            min="0"
-            step="1"
-            value={newOption.miles === 0 ? "" : newOption.miles}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                miles: toNumber(event.target.value),
-              }))
-            }
-            placeholder="Pontos"
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={newOption.cashAmount === 0 ? "" : newOption.cashAmount}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                cashAmount: toNumber(event.target.value),
-              }))
-            }
-            placeholder="Taxa (R$)"
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={newOption.saleAmount === 0 ? "" : newOption.saleAmount}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                saleAmount: toNumber(event.target.value),
-              }))
-            }
-            placeholder="Venda (R$)"
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <select
-            value={newOption.commissionType}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                commissionType: event.target.value as CommissionType,
-              }))
-            }
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          >
-            {COMMISSION_TYPE_OPTIONS.map((type) => (
-              <option key={type.value} value={type.value}>
-                {type.label}
-              </option>
-            ))}
-          </select>
-          <input
-            type="number"
-            min="0"
-            step="0.01"
-            value={newOption.commissionValue === 0 ? "" : newOption.commissionValue}
-            onChange={(event) =>
-              setNewOption((current) => ({
-                ...current,
-                commissionValue: toNumber(event.target.value),
-              }))
-            }
-            placeholder="Comissao"
-            className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-          />
-          <button
-            type="button"
-            onClick={handleCreateOption}
-            className="h-10 rounded-xl bg-slate-950 px-3 text-sm font-semibold text-white transition hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-500"
-          >
-            Adicionar plano
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-4 space-y-3">
-        {options.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-600 dark:border-slate-600 dark:bg-slate-800/60 dark:text-slate-300">
-            Nenhum plano adicionado ainda.
-          </div>
-        ) : (
-          options.map((option, index) => (
-            <article
-              key={option.id}
-              className={`rounded-2xl border p-3 ${
-                index === 0
-                  ? "border-emerald-200 bg-emerald-50/60 dark:border-emerald-700/50 dark:bg-emerald-950/30"
-                  : "border-slate-200 bg-slate-50/70 dark:border-slate-700 dark:bg-slate-800/70"
-              }`}
-            >
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Nome do plano
-                  </span>
-                  <input
-                    type="text"
-                    value={option.name}
-                    onChange={(event) => onTextChange(option.id, "name", event.target.value)}
-                    placeholder="Ex: Opcao 3"
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Companhia aerea
-                  </span>
-                  <select
-                    value={option.company}
-                    onChange={(event) =>
-                      onCompanyChange(option.id, event.target.value as CompanyKey)
-                    }
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  >
-                    {COMPANY_OPTIONS.map((company) => (
-                      <option key={company.key} value={company.key}>
-                        {company.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Quantidade de pontos para a viagem
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="1"
-                    value={option.miles === 0 ? "" : option.miles}
-                    onChange={(event) =>
-                      onNumberChange(option.id, "miles", event.target.value)
-                    }
-                    placeholder="Ex: 24183"
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Taxa / complemento em dinheiro (R$)
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={option.cashAmount === 0 ? "" : option.cashAmount}
-                    onChange={(event) =>
-                      onNumberChange(option.id, "cashAmount", event.target.value)
-                    }
-                    placeholder="Ex: 50"
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Valor de venda ao cliente (R$)
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={option.saleAmount === 0 ? "" : option.saleAmount}
-                    onChange={(event) =>
-                      onNumberChange(option.id, "saleAmount", event.target.value)
-                    }
-                    placeholder="Ex: 800"
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Tipo de comissao
-                  </span>
-                  <select
-                    value={option.commissionType}
-                    onChange={(event) =>
-                      onCommissionTypeChange(option.id, event.target.value as CommissionType)
-                    }
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  >
-                    {COMMISSION_TYPE_OPTIONS.map((type) => (
-                      <option key={type.value} value={type.value}>
-                        {type.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-
-                <label className="flex flex-col gap-1">
-                  <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
-                    Valor da comissao
-                  </span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={option.commissionValue === 0 ? "" : option.commissionValue}
-                    onChange={(event) =>
-                      onNumberChange(option.id, "commissionValue", event.target.value)
-                    }
-                    placeholder="Ex: 5 ou 50"
-                    className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
-                  />
-                </label>
-
-                <div className="flex items-end">
-                  <button
-                    type="button"
-                    onClick={() => onRemove(option.id)}
-                    className="h-10 w-full rounded-xl border border-rose-200 bg-rose-50 px-3 text-sm font-semibold text-rose-700 transition hover:bg-rose-100 dark:border-rose-700/60 dark:bg-rose-950/40 dark:text-rose-300"
-                  >
-                    Remover
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                <div className="rounded-xl bg-white px-3 py-2 text-xs dark:bg-slate-900">
-                  <p className="text-slate-500 dark:text-slate-400">Custo total</p>
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">
-                    {formatBRL(option.totalCost)}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-white px-3 py-2 text-xs dark:bg-slate-900">
-                  <p className="text-slate-500 dark:text-slate-400">Lucro bruto</p>
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">
-                    {formatBRL(option.grossProfit)}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-white px-3 py-2 text-xs dark:bg-slate-900">
-                  <p className="text-slate-500 dark:text-slate-400">Lucro liquido</p>
-                  <p
-                    className={`font-semibold ${
-                      option.netProfit >= 0
-                        ? "text-emerald-700 dark:text-emerald-300"
-                        : "text-rose-700 dark:text-rose-300"
-                    }`}
-                  >
-                    {formatBRL(option.netProfit)}
-                  </p>
-                </div>
-                <div className="rounded-xl bg-white px-3 py-2 text-xs dark:bg-slate-900">
-                  <p className="text-slate-500 dark:text-slate-400">Margem liquida</p>
-                  <p className="font-semibold text-slate-900 dark:text-slate-100">
-                    {formatPercent(option.netMargin)}
-                  </p>
-                </div>
-              </div>
-            </article>
-          ))
-        )}
-      </div>
-    </section>
-  );
+      </details>
+    </article>)}
+  </div>;
 }

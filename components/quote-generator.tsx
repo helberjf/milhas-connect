@@ -193,16 +193,17 @@ export function QuoteGenerator() {
     <section className="rounded-[28px] border border-slate-200/80 bg-white/95 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 sm:p-5">
       <div className="flex flex-col gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-300">
-          Gerador de orcamento online
+          Orçamentos de passagens
         </p>
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Crie proposta e envie um link para aprovacao
+          Prepare uma proposta de viagem
         </h2>
       </div>
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         <input
           type="text"
+          aria-label="Título da proposta"
           value={title}
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Titulo da proposta"
@@ -210,6 +211,7 @@ export function QuoteGenerator() {
         />
         <input
           type="text"
+          aria-label="Nome do responsável"
           value={freelancerName}
           onChange={(event) => setFreelancerName(event.target.value)}
           placeholder="Seu nome"
@@ -217,6 +219,7 @@ export function QuoteGenerator() {
         />
         <input
           type="text"
+          aria-label="Nome do cliente"
           value={clientName}
           onChange={(event) => setClientName(event.target.value)}
           placeholder="Nome do cliente"
@@ -224,6 +227,7 @@ export function QuoteGenerator() {
         />
         <input
           type="number"
+          aria-label="Valor total da proposta em reais"
           min="0"
           step="0.01"
           value={amount === 0 ? "" : amount}
@@ -233,6 +237,7 @@ export function QuoteGenerator() {
         />
         <input
           type="date"
+          aria-label="Validade da proposta"
           value={validUntil}
           onChange={(event) => setValidUntil(event.target.value)}
           className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
@@ -247,6 +252,7 @@ export function QuoteGenerator() {
       </div>
 
       <textarea
+        aria-label="Descrição da viagem e serviços incluídos"
         value={scope}
         onChange={(event) => setScope(event.target.value)}
         rows={3}
@@ -288,7 +294,7 @@ export function QuoteGenerator() {
           </div>
 
           <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-            Freelancer: {activeQuote.freelancerName}
+            Responsável: {activeQuote.freelancerName}
           </p>
           <p className="text-sm text-slate-600 dark:text-slate-300">
             Cliente: {activeQuote.clientName}

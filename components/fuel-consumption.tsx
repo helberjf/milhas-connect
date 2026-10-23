@@ -144,10 +144,10 @@ export function FuelConsumption() {
     <section className="rounded-[28px] border border-slate-200/80 bg-white/95 p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/90 sm:p-5">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-700 dark:text-sky-300">
-          Veiculo
+          Viagens de carro
         </p>
         <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100">
-          Calculadora de consumo de combustivel
+          Consumo de combustível
         </h2>
       </div>
 
@@ -158,12 +158,14 @@ export function FuelConsumption() {
         <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-6">
           <input
             type="date"
+            aria-label="Data do abastecimento"
             value={date}
             onChange={(event) => setDate(event.target.value)}
             className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm outline-none focus:border-sky-500 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100"
           />
           <input
             type="number"
+            aria-label="Odômetro em quilômetros"
             min="0"
             step="1"
             value={odometerKm}
@@ -173,6 +175,7 @@ export function FuelConsumption() {
           />
           <input
             type="number"
+            aria-label="Quantidade de litros"
             min="0"
             step="0.01"
             value={liters}
@@ -182,6 +185,7 @@ export function FuelConsumption() {
           />
           <input
             type="number"
+            aria-label="Valor pago em reais"
             min="0"
             step="0.01"
             value={totalCost}
@@ -191,6 +195,7 @@ export function FuelConsumption() {
           />
           <input
             type="text"
+            aria-label="Tipo de combustível"
             value={fuelType}
             onChange={(event) => setFuelType(event.target.value)}
             placeholder="Combustivel"
